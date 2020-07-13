@@ -29,6 +29,8 @@ import {
   Title,
   UserAvatar,
   UserAvatarButton,
+  ButtonSignOut,
+  ButtonSignOutText,
 } from './styles';
 
 interface ProfileFormData {
@@ -40,7 +42,7 @@ interface ProfileFormData {
 }
 
 const Profile: React.FC = () => {
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, signOut } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
@@ -50,7 +52,7 @@ const Profile: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
-  const handleSignUp = useCallback(
+  const handleUpdate = useCallback(
     async (data: ProfileFormData) => {
       try {
         formRef.current?.setErrors({});
@@ -161,6 +163,10 @@ const Profile: React.FC = () => {
     navigation.goBack();
   }, [navigation]);
 
+  const handleSignUp = useCallback(() => {
+    signOut();
+  }, [signOut]);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -168,10 +174,7 @@ const Profile: React.FC = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
-        >
+        <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
           <Container>
             <BackButton onPress={handleGoBack}>
               <Icon name="chevron-left" size={24} color="#999591" />
@@ -185,7 +188,7 @@ const Profile: React.FC = () => {
               <Title>Meu Perfil</Title>
             </View>
 
-            <Form initialData={user} ref={formRef} onSubmit={handleSignUp}>
+            <Form initialData={user} ref={formRef} onSubmit={handleUpdate}>
               <Input
                 autoCapitalize="words"
                 name="name"
@@ -250,6 +253,10 @@ const Profile: React.FC = () => {
               </Button>
             </Form>
           </Container>
+
+          <ButtonSignOut onPress={handleSignUp}>
+            <ButtonSignOutText>Sair</ButtonSignOutText>
+          </ButtonSignOut>
         </ScrollView>
       </KeyboardAvoidingView>
     </>
